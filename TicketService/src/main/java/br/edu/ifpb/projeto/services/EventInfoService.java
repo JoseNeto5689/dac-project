@@ -6,6 +6,7 @@ import br.edu.ifpb.projeto.repositories.EventInfoRepository;
 import br.edu.ifpb.projeto.utils.GenericCRUDService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +31,12 @@ public class EventInfoService implements GenericCRUDService<EventInfo> {
 
     @Override
     public EventInfo save(EventInfo entity) {
+        if(!entity.getEventStart().isAfter(LocalDateTime.now())){
+            throw new RuntimeException("Event start date cannot be this date");
+        }
+        if(!entity.getEventEnd().isAfter(LocalDateTime.now())){
+            throw new RuntimeException("Event end date cannot be this date");
+        }
         return this.eventInfoRepository.save(entity);
     }
 

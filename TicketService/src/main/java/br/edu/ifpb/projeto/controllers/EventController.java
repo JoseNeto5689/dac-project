@@ -1,8 +1,11 @@
 package br.edu.ifpb.projeto.controllers;
 
+import br.edu.ifpb.projeto.dtos.EventCreateDTO;
 import br.edu.ifpb.projeto.dtos.EventDTO;
 import br.edu.ifpb.projeto.models.Event;
+import br.edu.ifpb.projeto.models.EventInfo;
 import br.edu.ifpb.projeto.producer.EmailRequestProducer;
+import br.edu.ifpb.projeto.services.EventInfoService;
 import br.edu.ifpb.projeto.services.EventService;
 import br.edu.ifpb.projeto.utils.ObjectUtils;
 import org.springframework.beans.BeanUtils;
@@ -17,14 +20,21 @@ import java.util.UUID;
 @RequestMapping("/api/events")
 public class EventController {
     private final EventService eventService;
+    private final EventInfoService eventInfoService;
 
-    public EventController(EventService eventService) {
+    public EventController(EventService eventService, EventInfoService eventInfoService) {
         this.eventService = eventService;
+        this.eventInfoService = eventInfoService;
+    }
+
+    @PostMapping("/date")
+    public ResponseEntity<EventInfo> createDate(@RequestBody EventInfo date) {
+        return new ResponseEntity<>(eventInfoService.save(date), HttpStatus.CREATED);
     }
 
 
     @PostMapping
-    public ResponseEntity<Event> saveEvent(@RequestBody Event event) {
+    public ResponseEntity<Event> saveEvent(@RequestBody EventCreateDTO event) {
         var savedEvent = eventService.save(event);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedEvent);
     }
